@@ -115,6 +115,33 @@ async def solve_captcha_via_gemini(base64_image: str, api_key: str) -> str:
                     continue
             raise e
 
+def is_valid_schedule_item(raw_info: str) -> bool:
+    """
+    Lọc bỏ các tiêu đề menu, tên tab và các ngày tháng đơn thuần không chứa môn học.
+    """
+    text_lower = raw_info.lower().strip()
+    
+    # Bỏ qua các chuỗi trùng khớp với tiêu đề menu/tab
+    ignored_keywords = [
+        "lịch học | lịch cá nhân",
+        "lịch cá nhân",
+        "lịch học",
+        "lịch thi",
+        "xem lịch học",
+        "trang chủ",
+        "thông báo",
+        "đăng xuất"
+    ]
+    if text_lower in ignored_keywords:
+        return False
+        
+    # Bỏ qua các dòng chỉ chứa ngày tháng mà không có môn học/tiết/phòng (Ví dụ: "Thứ bảy, ngày 1 tháng 8 năm 2026")
+    if text_lower.startswith("thứ") and "ngày" in text_lower and "năm" in text_lower:
+        if not any(k in text_lower for k in ["tiết", "phòng", "môn", "lớp", "mã", "học phần", "tín chỉ"]):
+            return False
+
+    return True
+
 class DTUScraper:
     """
     Lớp cào dữ liệu từ MyDTU, tự động đăng nhập và vượt Captcha bằng Gemini.
@@ -284,6 +311,9 @@ class DTUScraper:
                             if any(k in line.lower() for k in ["thứ", "tiết", "phòng", "lớp", "học phần", "lịch"]):
                                 items.append({"raw_info": line})
 
+                # Lọc bỏ các mục tiêu đề menu rác không chứa thông tin môn học
+                items = [item for item in items if is_valid_schedule_item(item.get("raw_info", ""))]
+
                 # Tính mã băm SHA256 để kiểm tra thay đổi
                 schedule_json_str = json.dumps(items, ensure_ascii=False, sort_keys=True)
                 schedule_hash = hashlib.sha256(schedule_json_str.encode("utf-8")).hexdigest()
@@ -403,19 +433,27 @@ async def main():
         logger.error(f"Lỗi khi lưu dữ liệu lịch học mới vào file: {e}")
 
     # Tạo tin nhắn thông báo gửi Telegram
-    items_lines = []
-    for idx, item in enumerate(timetable, 1):
-        items_lines.append(f"📌 *{idx}.* {item.get('raw_info')}")
+    if not timetable:
+        logger.info("Hiện tại không có lịch học (Trống lịch / Đang nghỉ).")
+        alert_text = (
+            "ℹ️ *[ THÔNG BÁO LỊCH HỌC MYDTU ]*\n\n"
+            "👋 **Chào Hoàng Vũ!** Hệ thống kiểm tra ghi nhận hiện tại **BẠN KHÔNG CÓ LỊCH HỌC** (Trống lịch / Đang trong thời gian nghỉ học).\n\n"
+            "✨ *Vũ cứ yên tâm nghỉ ngơi nhé! Hệ thống sẽ tiếp tục quét định kỳ và báo ngay khi nhà trường xếp lịch học mới.*"
+        )
+    else:
+        items_lines = []
+        for idx, item in enumerate(timetable, 1):
+            items_lines.append(f"📌 *{idx}.* {item.get('raw_info')}")
+            
+        schedule_summary = "\n".join(items_lines)
         
-    schedule_summary = "\n".join(items_lines) if items_lines else "_Không trích xuất được chi tiết thời khóa biểu._"
-    
-    alert_text = (
-        "🚨 *[ THÔNG BÁO THAY ĐỔI LỊCH HỌC MYDTU ]*\n\n"
-        "⚠️ *Chú ý Hoàng Vũ!* Hệ thống quét tự động vừa phát hiện nhà trường đã **CẬP NHẬT/THAY ĐỔI THỜI KHÓA BIỂU**!\n\n"
-        "📅 **Thời khóa biểu mới nhất:**\n"
-        f"{schedule_summary}\n\n"
-        "👉 *Vũ hãy kiểm tra lại phòng học và giờ học trên trang MyDTU ngay để không bị đi nhầm lớp nhé!*"
-    )
+        alert_text = (
+            "🚨 *[ THÔNG BÁO THAY ĐỔI LỊCH HỌC MYDTU ]*\n\n"
+            "⚠️ *Chú ý Hoàng Vũ!* Hệ thống quét tự động vừa phát hiện nhà trường đã **CẬP NHẬT/THAY ĐỔI THỜI KHÓA BIỂU**!\n\n"
+            "📅 **Thời khóa biểu mới nhất:**\n"
+            f"{schedule_summary}\n\n"
+            "👉 *Vũ hãy kiểm tra lại phòng học và giờ học trên trang MyDTU ngay để không bị đi nhầm lớp nhé!*"
+        )
 
     # Gửi cảnh báo về Telegram
     await send_telegram_alert(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, alert_text)
