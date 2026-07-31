@@ -432,28 +432,49 @@ async def main():
     except Exception as e:
         logger.error(f"Lỗi khi lưu dữ liệu lịch học mới vào file: {e}")
 
-    # Tạo tin nhắn thông báo gửi Telegram
-    if not timetable:
-        logger.info("Hiện tại không có lịch học (Trống lịch / Đang nghỉ).")
-        alert_text = (
-            "ℹ️ *[ THÔNG BÁO LỊCH HỌC MYDTU ]*\n\n"
-            "👋 **Chào Hoàng Vũ!** Hệ thống kiểm tra ghi nhận hiện tại **BẠN KHÔNG CÓ LỊCH HỌC** (Trống lịch / Đang trong thời gian nghỉ học).\n\n"
-            "✨ *Vũ cứ yên tâm nghỉ ngơi nhé! Hệ thống sẽ tiếp tục quét định kỳ và báo ngay khi nhà trường xếp lịch học mới.*"
-        )
+    # Tạo tin nhắn thông báo gửi Telegram phân tích Lịch Hôm Nay & Lịch Cả Tuần
+    now_vn = datetime.now(vn_tz)
+    weekday_names = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"]
+    today_name = weekday_names[now_vn.weekday()]
+    today_date_str = now_vn.strftime("%d/%m/%Y")
+
+    # Phân loại các buổi học hôm nay và các buổi học trong tuần
+    today_items = []
+    for item in timetable:
+        raw_txt = item.get("raw_info", "")
+        raw_lower = raw_txt.lower()
+        if today_name.lower() in raw_lower or now_vn.strftime("%d/%m") in raw_txt or now_vn.strftime("%d-%m") in raw_txt:
+            today_items.append(item)
+
+    # 1. Phần thông báo Lịch học Hôm nay
+    if today_items:
+        today_lines = [f"  📌 *{idx}.* {it.get('raw_info')}" for idx, it in enumerate(today_items, 1)]
+        today_summary = "\n".join(today_lines)
     else:
-        items_lines = []
+        today_summary = "  🎉 *Hôm nay bạn KHÔNG CÓ LỊCH HỌC (Được nghỉ).* "
+
+    # 2. Phần thông báo Lịch học Cả tuần
+    if timetable:
+        week_lines = []
         for idx, item in enumerate(timetable, 1):
-            items_lines.append(f"📌 *{idx}.* {item.get('raw_info')}")
-            
-        schedule_summary = "\n".join(items_lines)
-        
-        alert_text = (
-            "🚨 *[ THÔNG BÁO THAY ĐỔI LỊCH HỌC MYDTU ]*\n\n"
-            "⚠️ *Chú ý Hoàng Vũ!* Hệ thống quét tự động vừa phát hiện nhà trường đã **CẬP NHẬT/THAY ĐỔI THỜI KHÓA BIỂU**!\n\n"
-            "📅 **Thời khóa biểu mới nhất:**\n"
-            f"{schedule_summary}\n\n"
-            "👉 *Vũ hãy kiểm tra lại phòng học và giờ học trên trang MyDTU ngay để không bị đi nhầm lớp nhé!*"
-        )
+            raw_txt = item.get("raw_info", "")
+            is_today = today_name.lower() in raw_txt.lower() or now_vn.strftime("%d/%m") in raw_txt
+            tag = "👉 [HÔM NAY] " if is_today else "📌 "
+            week_lines.append(f"{tag}*{idx}.* {raw_txt}")
+        week_summary = "\n".join(week_lines)
+    else:
+        week_summary = "  ℹ️ *Tuần này hiện chưa ghi nhận lịch học nào (Trống lịch / Đang nghỉ học).* "
+
+    # Tổng hợp toàn bộ tin nhắn
+    alert_text = (
+        "🚨 *[ THÔNG BÁO THỜI KHÓA BIỂU MYDTU ]*\n\n"
+        f"👋 **Chào Hoàng Vũ!** Hệ thống vừa quét cập nhật dữ liệu lịch học MyDTU mới nhất:\n\n"
+        f"📅 **LỊCH HỌC HÔM NAY ({today_name}, {today_date_str}):**\n"
+        f"{today_summary}\n\n"
+        f"🗓️ **TỔNG HỢP LỊCH HỌC CẢ TUẦN:**\n"
+        f"{week_summary}\n\n"
+        "👉 *Vũ nhớ chú ý phòng học và giờ học để đi học đúng giờ nhé!*"
+    )
 
     # Gửi cảnh báo về Telegram
     await send_telegram_alert(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, alert_text)
