@@ -1,12 +1,13 @@
 # 🤖 Bot Quét Lịch Học MyDTU Tự Động (GitHub Actions)
 
-Hệ thống quét thời khóa biểu MyDTU tự động hoạt động trên đám mây bằng **GitHub Actions** (miễn phí 100%, không cần cắm máy tính). Bot tự động đăng nhập MyDTU, tự giải Captcha bằng Google Gemini AI, phân tích **Lịch Học Hôm Nay** & **Lịch Học Cả Tuần**, và phát ngay cảnh báo qua Telegram khi có bất kỳ sự thay đổi nào từ nhà trường.
+Hệ thống quét thời khóa biểu MyDTU tự động hoạt động trên đám mây bằng **GitHub Actions** (miễn phí 100%, không cần cắm máy tính). Bot tự động đăng nhập MyDTU, tự giải Captcha bằng Google Gemini AI, phân tích **Lịch Học Hôm Nay** & **Lịch Học Cả Tuần**, tự động **gửi báo cáo cố định lúc 5h00 sáng hàng ngày** và phát cảnh báo tức thì qua Telegram khi nhà trường đổi lịch.
 
 ---
 
 ## 🌟 Tính Năng Nổi Bật
 
-- 🔄 **Lập lịch tự động 5 tiếng/lần**: Quét liên tục và độc lập trên GitHub Actions.
+- 🌅 **Báo cáo cố định 5h00 sáng hàng ngày**: Đúng 5h00 sáng mỗi ngày, Bot sẽ tự động gửi tin nhắn báo cáo lịch học Hôm Nay và Tổng Hợp Cả Tuần về Telegram giúp bạn luôn chủ động chuẩn bị trước khi đi học.
+- 🔄 **Quét ngầm định kỳ 5 tiếng/lần**: Quét liên tục và tự động phát hiện thay đổi lịch từ phía nhà trường.
 - 🧩 **Tự động vượt Captcha**: Sử dụng mô hình AI `gemini-flash-latest` để giải Captcha hình ảnh chính xác.
 - 📅 **Phân tích Lịch Hôm Nay & Cả Tuần**:
   - Tự động nhận diện múi giờ Việt Nam (UTC+7).
@@ -22,7 +23,7 @@ Hệ thống quét thời khóa biểu MyDTU tự động hoạt động trên �
 
 ```
 ├── .github/workflows/
-│   └── quet_lich_hoc.yml    # Định nghĩa lịch chạy ngầm cho GitHub Actions (5 tiếng/lần)
+│   └── quet_lich_hoc.yml    # Định nghĩa lịch chạy ngầm cho GitHub Actions (5h00 sáng & mỗi 5 tiếng/lần)
 ├── check_schedule.py        # Script Python chính (Đăng nhập, giải Captcha, cào dữ liệu, gửi Telegram)
 ├── last_hash.txt            # Lưu mã băm SHA256 để so sánh sự thay đổi lịch học
 ├── last_schedule.json       # Lưu thông tin chi tiết lịch học gần nhất
