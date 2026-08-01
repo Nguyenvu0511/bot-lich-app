@@ -2,9 +2,10 @@ name: Quét Lịch Học MyDTU Định Kỳ
 
 on:
   schedule:
-    # Chạy mỗi 5 tiếng một lần (vào phút thứ 0 của các giờ 0, 5, 10, 15, 20)
-    # Lưu ý: Giờ của GitHub Actions tính theo giờ UTC (+0). Giờ Việt Nam là UTC+7.
+    # 1. Quét định kỳ mỗi 5 tiếng một lần để phát hiện thay đổi
     - cron: '0 */5 * * *'
+    # 2. Tự động kích hoạt gửi báo cáo lịch học hàng ngày đúng 5h00 sáng giờ Việt Nam (22:00 UTC)
+    - cron: '0 22 * * *'
   
   # Hỗ trợ kích hoạt chạy thủ công từ trang GitHub Actions
   workflow_dispatch:

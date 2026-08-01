@@ -415,12 +415,18 @@ async def main():
         except Exception as e:
             logger.warning(f"Không thể đọc file {hash_file}: {e}")
 
-    # So sánh xem lịch học có thay đổi không
-    if new_hash == old_hash:
+    # Kiểm tra xem có phải lượt chạy báo cáo buổi sáng lúc 5h00 (giờ VN) hoặc yêu cầu gửi bắt buộc không
+    is_morning_report = (h_vn == 5) or (os.getenv("FORCE_NOTIFY", "").lower() == "true")
+
+    # So sánh xem lịch học có thay đổi không (Nếu không phải lượt 5h sáng thì chỉ gửi khi có thay đổi)
+    if new_hash == old_hash and not is_morning_report:
         logger.info("Lịch học không có thay đổi so với lần quét trước. Kết thúc quy trình.")
         return
 
-    logger.info("🚨 PHÁT HIỆN THỜI KHÓA BIỂU MYDTU ĐÃ CÓ THAY ĐỔI!")
+    if is_morning_report:
+        logger.info("🌅 Kích hoạt gửi báo cáo thời khóa biểu buổi sáng lúc 5h00 sáng cho Hoàng Vũ!")
+    else:
+        logger.info("🚨 PHÁT HIỆN THỜI KHÓA BIỂU MYDTU ĐÃ CÓ THAY ĐỔI!")
 
     # Lưu lại lịch học mới vào file
     try:
