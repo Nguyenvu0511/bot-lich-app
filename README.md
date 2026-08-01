@@ -1,11 +1,15 @@
 # 🤖 Bot Quét Lịch Học MyDTU Tự Động (GitHub Actions)
 
-Hệ thống quét thời khóa biểu MyDTU tự động hoạt động trên đám mây bằng **GitHub Actions** (miễn phí 100%, không cần cắm máy tính). Bot tự động đăng nhập MyDTU, tự giải Captcha bằng Google Gemini AI, phân tích **Lịch Học Hôm Nay** & **Lịch Học Cả Tuần**, tự động **gửi báo cáo cố định lúc 5h00 sáng hàng ngày** và phát cảnh báo tức thì qua Telegram khi nhà trường đổi lịch.
+Hệ thống quét thời khóa biểu MyDTU tự động hoạt động trên đám mây bằng **GitHub Actions** (miễn phí 100%, không cần cắm máy tính). Bot tự động đăng nhập MyDTU, tự giải Captcha bằng Google Gemini AI, phân tích **Lịch Học Hôm Nay** & **Lịch Học Cả Tuần**, tự động **phân loại 3 hình thức học (Học tại trường / Online tại nhà / Tập trung & Trực tuyến)**, **gửi báo cáo cố định lúc 5h00 sáng hàng ngày** và phát cảnh báo tức thì qua Telegram khi nhà trường đổi lịch.
 
 ---
 
 ## 🌟 Tính Năng Nổi Bật
 
+- 🏫 **Tự động phân loại 3 hình thức học MyDTU**:
+  - 🏫 **`[HỌC TẠI TRƯỜNG]`**: Học trực tiếp tại phòng học trên cơ sở trường.
+  - 💻🏠 **`[ONLINE TẠI NHÀ (GV ở trường)]`**: Lớp học Tập Trung & Trực Tuyến (Giảng viên dạy ở phòng tại trường, Sinh viên học Online ở nhà).
+  - 💻 **`[ONLINE TẠI NHÀ]`**: Học trực tuyến/online hoàn toàn (Zoom, MS Teams, LMS).
 - 🌅 **Báo cáo cố định 5h00 sáng hàng ngày**: Đúng 5h00 sáng mỗi ngày, Bot sẽ tự động gửi tin nhắn báo cáo lịch học Hôm Nay và Tổng Hợp Cả Tuần về Telegram giúp bạn luôn chủ động chuẩn bị trước khi đi học.
 - 🔄 **Quét ngầm định kỳ 5 tiếng/lần**: Quét liên tục và tự động phát hiện thay đổi lịch từ phía nhà trường.
 - 🧩 **Tự động vượt Captcha**: Sử dụng mô hình AI `gemini-flash-latest` để giải Captcha hình ảnh chính xác.

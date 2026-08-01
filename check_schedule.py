@@ -142,6 +142,27 @@ def is_valid_schedule_item(raw_info: str) -> bool:
 
     return True
 
+def get_class_type_tag(raw_info: str) -> str:
+    """
+    Phân loại hình thức học:
+    - 💻🏠 [ONLINE TẠI NHÀ (GV ở trường)]: Lớp học tập trung & trực tuyến
+    - 💻 [ONLINE TẠI NHÀ]: Học online hoàn toàn
+    - 🏫 [HỌC TẠI TRƯỜNG]: Học trực tiếp trên lớp
+    """
+    text_lower = raw_info.lower()
+    
+    # 1. Hình thức Lớp Học Tập Trung & Trực Tuyến (Sinh viên học Online ở nhà, Giảng viên ở phòng học tại trường)
+    if any(k in text_lower for k in ["tập trung & trực tuyến", "tập trung và trực tuyến", "tập trung & online", "tập trung và online"]):
+        return "💻🏠 [ONLINE TẠI NHÀ (GV ở trường)]"
+        
+    # 2. Hình thức Trực tuyến / Online hoàn toàn
+    online_keywords = ["trực tuyến", "online", "zoom", "teams", "lms", "e-learning", "google meet"]
+    if any(k in text_lower for k in online_keywords):
+        return "💻 [ONLINE TẠI NHÀ]"
+        
+    # 3. Hình thức Học trực tiếp tại trường
+    return "🏫 [HỌC TẠI TRƯỜNG]"
+
 class DTUScraper:
     """
     Lớp cào dữ liệu từ MyDTU, tự động đăng nhập và vượt Captcha bằng Gemini.
@@ -454,7 +475,11 @@ async def main():
 
     # 1. Phần thông báo Lịch học Hôm nay
     if today_items:
-        today_lines = [f"  📌 *{idx}.* {it.get('raw_info')}" for idx, it in enumerate(today_items, 1)]
+        today_lines = []
+        for idx, it in enumerate(today_items, 1):
+            raw_info = it.get('raw_info', '')
+            type_tag = get_class_type_tag(raw_info)
+            today_lines.append(f"  📌 *{idx}.* {type_tag} {raw_info}")
         today_summary = "\n".join(today_lines)
     else:
         today_summary = "  🎉 *Hôm nay bạn KHÔNG CÓ LỊCH HỌC (Được nghỉ).* "
@@ -466,7 +491,8 @@ async def main():
             raw_txt = item.get("raw_info", "")
             is_today = today_name.lower() in raw_txt.lower() or now_vn.strftime("%d/%m") in raw_txt
             tag = "👉 [HÔM NAY] " if is_today else "📌 "
-            week_lines.append(f"{tag}*{idx}.* {raw_txt}")
+            type_tag = get_class_type_tag(raw_txt)
+            week_lines.append(f"{tag}*{idx}.* {type_tag} {raw_txt}")
         week_summary = "\n".join(week_lines)
     else:
         week_summary = "  ℹ️ *Tuần này hiện chưa ghi nhận lịch học nào (Trống lịch / Đang nghỉ học).* "

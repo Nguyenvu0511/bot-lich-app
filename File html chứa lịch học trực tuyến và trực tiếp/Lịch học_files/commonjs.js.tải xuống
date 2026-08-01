@@ -1,0 +1,250 @@
+﻿function checkItem(control, total, rowId, cheAllControl, cheItemControl, hidValueReturnControl, buttonEnableDisable) {
+    var dem = 0;
+    var i = 0;
+    var idxOfRow = control.id.replace(cheItemControl, '');
+    //alert(idxOfRow);    
+    if (document.getElementById(control.id).checked) {
+        for (i = 0; i < total; i++) {
+            if (document.getElementById(cheItemControl + '' + i).checked) {
+                dem++;
+            }
+        }
+        //add class hightlight
+        if (rowId != '') {
+            $('#' + rowId + idxOfRow).removeClass('bgmouseout');
+            $('#' + rowId + idxOfRow).addClass('bghighlight');
+        }
+
+        //alert(dem + '-' + total);
+        if (dem == total) {
+            document.getElementById(cheAllControl).checked = true;
+        }
+        if (!checkstrinstr(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(control.id).value + '$'))
+            document.getElementById(hidValueReturnControl).value = document.getElementById(hidValueReturnControl).value + document.getElementById(control.id).value + '$';
+    } else {
+        for (i = 0; i < total; i++) {
+            if (document.getElementById(cheItemControl + '' + i).checked) {
+                dem++;
+            }
+        }
+        //remove class hightlight
+        if (rowId != '') {
+            $('#' + rowId + idxOfRow).removeClass('bghighlight');
+            $('#' + rowId + idxOfRow).addClass('bgmouseout');
+        }
+        document.getElementById(cheAllControl).checked = false;
+        if (checkstrinstr(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(control.id).value + '$'))
+            document.getElementById(hidValueReturnControl).value = removeid(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(control.id).value + '$', '$');
+    }
+    //alert(dem);
+    //enable/disable button
+    var btnSpl = buttonEnableDisable.split(',');
+    var b = 0;
+    if (dem > 0) {
+        for (b = 0; b < btnSpl.length; b++) {
+            if (btnSpl[b] != '')
+                document.getElementById(btnSpl[b]).disabled = false;
+        }
+    } else {
+        for (b = 0; b < btnSpl.length; b++) {
+            if (btnSpl[b] != '')
+                document.getElementById(btnSpl[b]).disabled = true;
+        }
+    }
+    //alert(document.getElementById(hidValueReturnControl).value);
+}
+
+function checkTickAll(control, total, rowId, cheAllControl, cheItemControl, hidValueReturnControl, buttonEnableDisable) {
+    document.getElementById(hidValueReturnControl).value = '';
+    var btnSpl = buttonEnableDisable.split(',');
+    var b = 0;
+    var i = 0;
+    if (document.getElementById(control.id).checked) {
+        for (i = 0; i < total; i++) {
+            //add class hightlight
+            //alert('#' + rowId + i);
+            if (rowId != '') {
+                $('#' + rowId + i).removeClass('bgmouseout');
+                $('#' + rowId + i).addClass('bghighlight');
+            }
+            document.getElementById(cheItemControl + '' + i).checked = true;
+            if (!checkstrinstr(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(cheItemControl + '' + i).value + '$'))
+                document.getElementById(hidValueReturnControl).value = document.getElementById(hidValueReturnControl).value + document.getElementById(cheItemControl + '' + i).value + '$';
+            //enable/disable button
+            for (b = 0; b < btnSpl.length; b++) {
+                if (btnSpl[b] != '')
+                    document.getElementById(btnSpl[b]).disabled = false;
+            }
+        }
+    } else {
+        for (i = 0; i < total; i++) {
+            //remove class hightlight
+            if (rowId != '') {
+                $('#' + rowId + i).removeClass('bghighlight');
+                $('#' + rowId + i).addClass('bgmouseout');
+            }
+            document.getElementById(cheItemControl + '' + i).checked = false;
+            if (checkstrinstr(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(cheItemControl + '' + i).value + '$'))
+                document.getElementById(hidValueReturnControl).value = removeid(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(cheItemControl + '' + i).value + '$', '$');
+            //enable/disable button
+            for (b = 0; b < btnSpl.length; b++) {
+                if (btnSpl[b] != '')
+                    document.getElementById(btnSpl[b]).disabled = true;
+            }
+        }
+    }
+    //alert(document.getElementById(hidValueReturnControl).value);
+}
+
+function setCheckedForCheckBox(total, rowId, cheAllControl, cheItemControl, listOfValue, buttonEnableDisable) {
+    var btnSpl = buttonEnableDisable.split(',');
+    var valueSpl = listOfValue.split('$');
+    var dem = 0;
+    for (var i = 0; i < total; i++) {
+        for (var j = 0; j < valueSpl.length; j++) {
+            if (valueSpl[j] != '') {
+                if (document.getElementById(cheItemControl + '' + i).value == valueSpl[j]) {
+                    document.getElementById(cheItemControl + '' + i).checked = true;
+                    //add class hightlight
+                    $('#' + rowId + i).removeClass('bgmouseout');
+                    $('#' + rowId + i).addClass('bghighlight');
+                    for (var b = 0; b < btnSpl.length; b++) {
+                        if (btnSpl[b] != '')
+                            document.getElementById(btnSpl[b]).disabled = false;
+                    }
+                    dem++;
+                }
+            }
+        }
+    }
+    if (dem == total) {
+        document.getElementById(cheAllControl).checked = true;
+    }
+}
+
+function checkItemOtherFunction(control, total, cheItemControl, hidValueReturnControl) {
+    var dem = 0;
+    var i = 0;
+
+    if (document.getElementById(control.id).checked) {
+        /*for (i = 0; i < total; i++) {
+            if (document.getElementById(cheItemControl + '' + i).checked) {
+                dem++;
+            }
+        }*/
+
+        if (checkstrinstr(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(control.id).value + '-0' + '$'))
+            document.getElementById(hidValueReturnControl).value = removeid(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(control.id).value + '-0' + '$', '$');
+
+        if (!checkstrinstr(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(control.id).value + '-1' + '$'))
+            document.getElementById(hidValueReturnControl).value = document.getElementById(hidValueReturnControl).value + document.getElementById(control.id).value + '-1' + '$';
+    } else {
+        /*for (i = 0; i < total; i++) {
+            if (document.getElementById(cheItemControl + '' + i).checked) {
+                dem++;
+            }
+        }*/
+
+        if (checkstrinstr(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(control.id).value + '-1' + '$'))
+            document.getElementById(hidValueReturnControl).value = removeid(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(control.id).value + '-1' + '$', '$');
+
+        if (!checkstrinstr(document.getElementById(hidValueReturnControl).value, '$' + document.getElementById(control.id).value + '-0' + '$'))
+            document.getElementById(hidValueReturnControl).value = document.getElementById(hidValueReturnControl).value + document.getElementById(control.id).value + '-0' + '$';
+    }
+
+    //alert(document.getElementById(hidValueReturnControl).value);
+}
+
+//common
+function checkstrinstr(input, str) {
+    //alert(input + '--------' + str + '------' + input.indexOf(str));
+    if (input.indexOf(str) != -1) return true;
+    return false;
+}
+
+function removeid(input, rev, newstr) {
+    //alert(input + '--------' + rev + '------' + newstr);
+    return input.replace(rev, newstr);
+}
+
+function trimStart(input, symbol) {
+    var dem = -1;
+    for (var i = 0; i < input.length; i++) {
+        if (input[0] != symbol) break;
+        if (input[i] == symbol) {
+            dem = i;
+            if (input[i + 1] != symbol && i + 1 < input.length) {
+                break;
+            }
+        }
+    }
+    if (dem >= 0)
+        return input.substring(dem + 1, input.length);
+    return input;
+}
+//
+
+function loadGridPaging(currentPage, groupid, controlIdLoad, linkUrl) {
+    var tempdate = new Date();
+    var cdate = tempdate.getDate() + '' + tempdate.getMonth() + '' + tempdate.getFullYear() + '' + tempdate.getHours() + '' + tempdate.getMinutes() + '' + tempdate.getSeconds();
+    var link = "";
+    if (linkUrl.indexOf('?') >= 0) {
+        link = linkUrl + "&currpage=" + currentPage + "&groupid=" + groupid + "&cdate=" + cdate;
+    } else {
+        link = linkUrl + "?currpage=" + currentPage + "&groupid=" + groupid + "&cdate=" + cdate;
+    }
+    $('#' + controlIdLoad).html("<div align='center'><img src='../images/ajax-loader.gif' />Đang tải dữ liệu...</div>");
+    $('#' + controlIdLoad).load(link);
+}
+
+function loadGroupNamePage(userid, controlId) {
+    var tempdate = new Date();
+    var cdate = tempdate.getDate() + '' + tempdate.getMonth() + '' + tempdate.getFullYear() + '' + tempdate.getHours() + '' + tempdate.getMinutes() + '' + tempdate.getSeconds();
+
+    $('#' + controlId).html("<div align='center'><img src='../images/ajax-loader1.gif' /></div>");
+    $('#' + controlId).load("../admin/ajax/accountgroup/GetGroupNameOfUser.aspx?userid=" + userid + "&cdate=" + cdate);
+
+}
+
+function loadObjectPage(linkUrl, controlId, moduleId, moduleFuncRelId) {
+    var tempdate = new Date();
+    var cdate = tempdate.getDate() + '' + tempdate.getMonth() + '' + tempdate.getFullYear() + '' + tempdate.getHours() + '' + tempdate.getMinutes() + '' + tempdate.getSeconds();
+
+    $('#' + controlId).html("<div align='center'><img src='../images/ajax-loader1.gif' /></div>");
+    $('#' + controlId).load(linkUrl + "?cdate=" + cdate + "&moduleId=" + moduleId + "&moduleFuncRelId=" + moduleFuncRelId);
+
+}
+
+function CreateToken(encryptData, key, iv) {
+    var milliseconds = new Date().getTime();
+    return encryptData + "." + EncryptString(milliseconds, key, iv);
+}
+
+function EncryptString(para, key, iv) {
+    var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(para), CryptoJS.enc.Utf8.parse(key),
+                             {
+                                 keySize: 128,
+                                 iv: CryptoJS.enc.Utf8.parse(iv),
+                                 mode: CryptoJS.mode.CBC,
+                                 padding: CryptoJS.pad.Pkcs7
+                             });
+    return encrypted;
+}
+
+function doClick(buttonId, e) {
+    var key;
+    if (window.event)
+        key = window.event.keyCode;     //IE
+    else
+        key = e.which;     //firefox
+
+    if (key == 13) {
+        var btn = document.getElementById(buttonId);
+        //alert(key);
+        //alert(btn);
+        if (btn != null) { //If we find the button click it
+            btn.click();
+            event.keyCode = 0;
+        }
+    }
+}
