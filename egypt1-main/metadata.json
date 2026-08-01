@@ -1,0 +1,6 @@
+{
+  "name": "MyDTU - Sakura Schedule",
+  "description": "Ứng dụng quản lý lịch học, lịch tuần, thông báo và cài đặt cho sinh viên Duy Tân (MyDTU) với giao diện Liquid Glass Sakura.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

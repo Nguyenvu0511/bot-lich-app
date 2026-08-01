@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>myDTU</title>
+    <style>
+        /* Fonts */
+        @font-face {
+            font-family: 'NotoSans';
+            src: url('mydtu_ui_design_kit/fonts/NotoSans-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'NotoSans';
+            src: url('mydtu_ui_design_kit/fonts/NotoSans-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'NotoSans';
+            src: url('mydtu_ui_design_kit/fonts/NotoSans-Italic.ttf') format('truetype');
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        /* Variables */
+        :root {
+            --primary-dark: #B71C1C;
+            --primary: #C62828;
+            --primary-light: #E53935;
+            --bg-color: #F5F5F5;
+            --card-bg: #FFFFFF;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --accent: #FFB300;
+            --success: #4CAF50;
+            --error: #F44336;
+            --border-color: #E0E0E0;
+            --bottom-nav-bg: #FFFFFF;
+            --input-bg: #F5F5F5;
+        }
+
+        [data-theme="dark"] {
+            --primary-dark: #8E0000;
+            --primary: #B71C1C;
+            --primary-light: #C62828;
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --text-primary: #F0F0F0;
+            --text-secondary: #999999;
+            --border-color: #333333;
+            --bottom-nav-bg: #1E1E1E;
+            --input-bg: #2C2C2C;
+        }
+
+        /* Reset & Base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'NotoSans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* App Container */
+        #app {
+            width: 100%;
+            max-width: 390px;
+            height: 100%;
+            max-height: 844px;
+            background-color: var(--bg-color);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Screens */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            background-color: var(--bg-color);
+            z-index: 10;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .screen.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .screen-with-nav {
+            padding-bottom: 60px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 1. Splash Screen */
+        #splash-screen {
+            background: url('mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/img_background_splash.png') center/cover no-repeat;
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .splash-cover {
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 40px;
+        }
+        .splash-logo {
+            width: 120px;
+            position: absolute;
+            bottom: 40px;
+        }
+
+        /* 2. Login Screen */
+        #login-screen {
+            background-color: var(--bg-color);
+        }
+        .login-header {
+            height: 40%;
+            background: url('mydtu_ui_design_kit/images/assets/flutter_assets/assets/images/img_bg_login.png') center bottom/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .login-logo {
+            width: 150px;
+        }
+        .login-lang {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .login-lang img {
+            width: 30px;
+            height: 20px;
+            border-radius: 2px;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+        .login-lang img.active {
+            opacity: 1;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .login-form-container {
+            flex: 1;
+            padding: 20px;
+            margin-top: -20px;
+            z-index: 2;
+        }
+        .login-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            background-color: var(--input-bg);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .input-group img {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            opacity: 0.7;
+        }
+        .input-group input {
+            flex: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+        .captcha-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .captcha-box {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            font-size: 18px;
+            color: #333;
+        }
+        .captcha-input {
+            flex: 1;
+            margin: 0 10px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:active {
+            background-color: var(--primary-dark);
+        }
+
+        /* Top App Bar */
+        .app-bar {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            color: white;
+            padding: 20px 20px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+        .app-bar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .app-bar-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: white;
+        }
+        .app-bar-info h3 {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        .app-bar-info p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .app-bar-actions {
+            display: flex;
+            gap: 15px;
+        }
+        .app-bar-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            filter: brightness(0) invert(1);
+        }
+
+        /* 3. Home Screen */
+        .welcome-card {
+            margin: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            background: url('mydtu_ui_design_kit/images/assets/flutter_assets/assets/images/img_background_c.png') center/cover;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .welcome-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, rgba(183,28,28,0.9) 0%, rgba(198,40,40,0.7) 100%);
+            z-index: 1;
+        }
+        .welcome-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .welcome-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 0 20px 20px;
+        }
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .feature-card:active {
+            transform: scale(0.95);
+        }
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        .feature-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: var(--bottom-nav-bg);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 50;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 20%;
+        }
+        .nav-item.active {
+            color: var(--primary);
+        }
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            opacity: 0.6;
+            transition: 0.2s;
+        }
+        .nav-item.active .nav-icon {
+            opacity: 1;
+            filter: invert(19%) sepia(87%) saturate(2758%) hue-rotate(348deg) brightness(85%) contrast(98%);
+        }
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Generic Header for sub-screens */
+        .sub-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+        .btn-back {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            filter: brightness(0) invert(1);
+        }
+        .sub-header-title {
+            font-size: 18px;
+            font-weight: bold;
+            flex: 1;
+        }
+
+        /* 4. Timetable Screen */
+        .week-tabs {
+            display: flex;
+            background-color: var(--card-bg);
+            padding: 10px 5px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .week-tabs::-webkit-scrollbar { display: none; }
+        .day-tab {
+            min-width: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            border-radius: 8px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .day-tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        .day-name { font-size: 12px; }
+        .day-date { font-weight: bold; font-size: 16px; margin-top: 2px; }
+        
+        .timetable-list {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .class-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .class-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        .class-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .class-detail img {
+            width: 16px;
+            height: 16px;
+            opacity: 0.6;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        .empty-state img {
+            width: 150px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        /* 5. Grades Screen */
+        .semester-selector {
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .semester-selector select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+        .gpa-card {
+            margin: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+        .gpa-item h4 { font-size: 12px; opacity: 0.9; margin-bottom: 5px; }
+        .gpa-item p { font-size: 20px; font-weight: bold; }
+        
+        .grades-table-container {
+            margin: 0 15px 15px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .grades-table th, .grades-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .grades-table th {
+            background-color: rgba(0,0,0,0.03);
+            font-weight: bold;
+        }
+        .score-good { color: var(--success); font-weight: bold; }
+        .score-bad { color: var(--error); font-weight: bold; }
+
+        /* 6. Notifications */
+        .notif-list {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .notif-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .notif-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(183,28,28,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .notif-icon img {
+            width: 24px;
+            height: 24px;
+        }
+        .notif-content { flex: 1; }
+        .notif-title { font-weight: bold; font-size: 15px; margin-bottom: 5px; }
+        .notif-date { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+        .notif-text { font-size: 14px; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* 7. Profile Screen */
+        .profile-header {
+            background: url('mydtu_ui_design_kit/images/assets/flutter_assets/assets/images/img_background_c_1.png') center/cover;
+            height: 180px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 20px;
+            color: white;
+            text-align: center;
+        }
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(183,28,28,0.5), rgba(183,28,28,0.9));
+            z-index: 1;
+        }
+        .profile-header > * { position: relative; z-index: 2; }
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid white;
+            margin-bottom: 10px;
+        }
+        .profile-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .info-item img {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            opacity: 0.7;
+        }
+        .info-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px; }
+        .info-value { font-size: 15px; font-weight: 500; }
+
+        /* 8. Settings */
+        .settings-list {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+        .setting-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .setting-left img {
+            width: 24px;
+            height: 24px;
+            opacity: 0.7;
+        }
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
+        
+        .btn-logout {
+            margin-top: 20px;
+            background-color: var(--card-bg);
+            color: var(--error);
+            border: 1px solid var(--error);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .app-version {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* 9. Wallet */
+        .wallet-card {
+            margin: 20px;
+            background: linear-gradient(135deg, #1E88E5, #1565C0);
+            color: white;
+            border-radius: 16px;
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 8px 15px rgba(21,101,192,0.3);
+        }
+        .wallet-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.9;
+        }
+        .wallet-card-header img { width: 24px; height: 24px; filter: brightness(0) invert(1); }
+        .wallet-balance { font-size: 32px; font-weight: bold; letter-spacing: 1px; }
+        
+        .transaction-list {
+            padding: 0 20px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+        .trans-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .trans-left { display: flex; align-items: center; gap: 15px; }
+        .trans-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            background-color: rgba(76,175,80,0.1);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .trans-icon img { width: 20px; height: 20px; }
+        .trans-info h4 { font-size: 15px; margin-bottom: 4px; }
+        .trans-info p { font-size: 12px; color: var(--text-secondary); }
+        .trans-amount { font-weight: bold; color: var(--success); }
+        
+    </style>
+</head>
+<body>
+
+<div id="app">
+
+    <!-- 1. SPLASH SCREEN -->
+    <div id="splash-screen" class="screen active">
+        <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/img_cover_splash.png" class="splash-cover" alt="Cover">
+        <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_logo_dtu.png" class="splash-logo" alt="DTU Logo">
+    </div>
+
+    <!-- 2. LOGIN SCREEN -->
+    <div id="login-screen" class="screen">
+        <div class="login-header">
+            <div class="login-lang">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_vietnam.png" class="active" alt="VI">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_en.png" alt="EN">
+            </div>
+            <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_logo_dtu.png" class="login-logo" alt="DTU Logo">
+        </div>
+        <div class="login-form-container">
+            <div class="login-card">
+                <div class="input-group">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_email.svg" alt="User">
+                    <input type="text" placeholder="Tên đăng nhập" value="29211269420">
+                </div>
+                <div class="input-group">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_password.svg" alt="Pass">
+                    <input type="password" placeholder="Mật khẩu" value="password123">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_see.svg" style="margin:0; width:20px; cursor:pointer;" alt="Show">
+                </div>
+                <div class="captcha-group">
+                    <div class="captcha-box">A7B2X</div>
+                    <input type="text" class="captcha-input" placeholder="Mã xác nhận">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_refresh.svg" style="width:24px; cursor:pointer;" alt="Refresh">
+                </div>
+                <button class="btn-primary" onclick="login()">Đăng nhập</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. HOME SCREEN -->
+    <div id="home-screen" class="screen screen-with-nav">
+        <div class="app-bar">
+            <div class="app-bar-user" onclick="navigateTo('profile-screen')">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/images/img_avatar.png" class="app-bar-avatar" alt="Avatar">
+                <div class="app-bar-info">
+                    <p>Xin chào,</p>
+                    <h3>NGUYỄN HOÀNG VŨ</h3>
+                </div>
+            </div>
+            <div class="app-bar-actions">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_alert.png" class="app-bar-icon" onclick="navigateTo('notifications-screen')" alt="Notif">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_setting.svg" class="app-bar-icon" onclick="navigateTo('settings-screen')" alt="Settings">
+            </div>
+        </div>
+
+        <div class="welcome-card" onclick="navigateTo('profile-screen')">
+            <div class="welcome-overlay"></div>
+            <div class="welcome-content">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/images/img_avatar.png" class="welcome-avatar" alt="Avatar">
+                <div>
+                    <h3 style="margin-bottom:5px;">NGUYỄN HOÀNG VŨ</h3>
+                    <p style="font-size:12px; opacity:0.9;">MSSV: 29211269420</p>
+                    <p style="font-size:12px; opacity:0.9;">Kỹ thuật Mạng máy tính</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card" onclick="navigateTo('timetable-screen')">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_calendar.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Lịch học</span>
+            </div>
+            <div class="feature-card" onclick="navigateTo('grades-screen')">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_score.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Bảng điểm</span>
+            </div>
+            <div class="feature-card">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_tuition_fee.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Học phí</span>
+            </div>
+            <div class="feature-card" onclick="navigateTo('notifications-screen')">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_alert.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Thông báo</span>
+            </div>
+            <div class="feature-card">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_course_outline.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Đăng ký môn</span>
+            </div>
+            <div class="feature-card">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_student_2.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Đánh giá GV</span>
+            </div>
+            <div class="feature-card">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_test.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Khảo thí</span>
+            </div>
+            <div class="feature-card" onclick="navigateTo('wallet-screen')">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_wallet.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Ví điện tử</span>
+            </div>
+            <div class="feature-card">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_transcript.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">BĐ chi tiết</span>
+            </div>
+            <div class="feature-card">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_student_3.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Danh sách SV</span>
+            </div>
+            <div class="feature-card">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_book.svg" class="feature-icon" alt="Icon">
+                <span class="feature-name">CT học</span>
+            </div>
+            <div class="feature-card">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_personal_schedule.png" class="feature-icon" alt="Icon">
+                <span class="feature-name">Lịch cá nhân</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. TIMETABLE SCREEN -->
+    <div id="timetable-screen" class="screen screen-with-nav">
+        <div class="sub-header">
+            <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_back.svg" class="btn-back" onclick="navigateTo('home-screen')" alt="Back">
+            <div class="sub-header-title">Lịch học</div>
+        </div>
+        
+        <div class="week-tabs">
+            <div class="day-tab active">
+                <span class="day-name">T2</span>
+                <span class="day-date">01</span>
+            </div>
+            <div class="day-tab">
+                <span class="day-name">T3</span>
+                <span class="day-date">02</span>
+            </div>
+            <div class="day-tab">
+                <span class="day-name">T4</span>
+                <span class="day-date">03</span>
+            </div>
+            <div class="day-tab">
+                <span class="day-name">T5</span>
+                <span class="day-date">04</span>
+            </div>
+            <div class="day-tab">
+                <span class="day-name">T6</span>
+                <span class="day-date">05</span>
+            </div>
+            <div class="day-tab">
+                <span class="day-name">T7</span>
+                <span class="day-date">06</span>
+            </div>
+            <div class="day-tab">
+                <span class="day-name">CN</span>
+                <span class="day-date">07</span>
+            </div>
+        </div>
+
+        <div class="timetable-list">
+            <div class="class-card">
+                <div class="class-title">An toàn Hệ điều hành (IS-401)</div>
+                <div class="class-detail">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_clock.svg" alt="Time">
+                    <span>07:00 - 09:15</span>
+                </div>
+                <div class="class-detail">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_alert.png" alt="Room">
+                    <span>Phòng P.502</span>
+                </div>
+            </div>
+            <div class="class-card">
+                <div class="class-title">Lập trình mạng Socket (NET-302)</div>
+                <div class="class-detail">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_clock.svg" alt="Time">
+                    <span>09:30 - 11:45</span>
+                </div>
+                <div class="class-detail">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_alert.png" alt="Room">
+                    <span>Phòng Lab3</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. GRADES SCREEN -->
+    <div id="grades-screen" class="screen">
+        <div class="sub-header">
+            <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_back.svg" class="btn-back" onclick="navigateTo('home-screen')" alt="Back">
+            <div class="sub-header-title">Kết quả học tập</div>
+        </div>
+        
+        <div class="semester-selector">
+            <select>
+                <option>Học kỳ 2 (2025-2026)</option>
+                <option>Học kỳ 1 (2025-2026)</option>
+            </select>
+        </div>
+
+        <div class="gpa-card">
+            <div class="gpa-item">
+                <h4>ĐTB Học kỳ</h4>
+                <p>8.15</p>
+            </div>
+            <div class="gpa-item">
+                <h4>ĐTB Tích lũy</h4>
+                <p>3.25</p>
+            </div>
+            <div class="gpa-item">
+                <h4>Tín chỉ</h4>
+                <p>11</p>
+            </div>
+        </div>
+
+        <div class="grades-table-container">
+            <table class="grades-table">
+                <thead>
+                    <tr>
+                        <th>Môn học</th>
+                        <th>TC</th>
+                        <th>QT</th>
+                        <th>Thi</th>
+                        <th>Tổng</th>
+                        <th>Loại</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>An toàn HĐH<br><small style="color:var(--text-secondary)">IS-401</small></td>
+                        <td>3</td>
+                        <td>8.5</td>
+                        <td>9.0</td>
+                        <td>8.9</td>
+                        <td class="score-good">A</td>
+                    </tr>
+                    <tr>
+                        <td>Lập trình Socket<br><small style="color:var(--text-secondary)">NET-302</small></td>
+                        <td>3</td>
+                        <td>7.5</td>
+                        <td>8.0</td>
+                        <td>7.9</td>
+                        <td class="score-good">B+</td>
+                    </tr>
+                    <tr>
+                        <td>Phân tích mã độc<br><small style="color:var(--text-secondary)">SE-403</small></td>
+                        <td>3</td>
+                        <td>9.0</td>
+                        <td>8.5</td>
+                        <td>8.7</td>
+                        <td class="score-good">A</td>
+                    </tr>
+                    <tr>
+                        <td>CSDL phân tán<br><small style="color:var(--text-secondary)">DB-312</small></td>
+                        <td>2</td>
+                        <td>6.8</td>
+                        <td>7.2</td>
+                        <td>7.1</td>
+                        <td class="score-good">B</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 6. NOTIFICATIONS SCREEN -->
+    <div id="notifications-screen" class="screen screen-with-nav">
+        <div class="sub-header">
+            <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_back.svg" class="btn-back" onclick="navigateTo('home-screen')" alt="Back">
+            <div class="sub-header-title">Thông báo</div>
+        </div>
+        
+        <div class="notif-list">
+            <div class="notif-card">
+                <div class="notif-icon">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_alert.png" alt="Icon">
+                </div>
+                <div class="notif-content">
+                    <div class="notif-title">Thông báo nghỉ học môn CSDL phân tán</div>
+                    <div class="notif-date">01/08/2026 08:30</div>
+                    <div class="notif-text">Lớp DB-312 nghỉ học ngày 01/08 do giảng viên đi công tác. Sẽ học bù vào tuần sau.</div>
+                </div>
+            </div>
+            <div class="notif-card">
+                <div class="notif-icon">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_tuition_fee.png" alt="Icon">
+                </div>
+                <div class="notif-content">
+                    <div class="notif-title">Nhắc nhở đóng học phí HK2</div>
+                    <div class="notif-date">25/07/2026 14:00</div>
+                    <div class="notif-text">Hạn chót đóng học phí học kỳ 2 năm học 2025-2026 là ngày 15/08/2026.</div>
+                </div>
+            </div>
+            <div class="notif-card">
+                <div class="notif-icon">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_test.png" alt="Icon">
+                </div>
+                <div class="notif-content">
+                    <div class="notif-title">Lịch thi giữa kỳ</div>
+                    <div class="notif-date">20/07/2026 09:15</div>
+                    <div class="notif-text">Đã có lịch thi giữa kỳ cho các môn học. Sinh viên vui lòng kiểm tra lịch cá nhân.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. PROFILE SCREEN -->
+    <div id="profile-screen" class="screen">
+        <div class="sub-header">
+            <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_back.svg" class="btn-back" onclick="navigateTo('home-screen')" alt="Back">
+            <div class="sub-header-title">Thông tin sinh viên</div>
+        </div>
+        
+        <div class="profile-header">
+            <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/images/img_avatar.png" class="profile-avatar" alt="Avatar">
+            <h2 style="font-size: 20px;">NGUYỄN HOÀNG VŨ</h2>
+            <p style="font-size: 14px; opacity: 0.9;">Tình trạng: Đang học</p>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-item">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_student_id.svg" alt="ID">
+                <div>
+                    <div class="info-label">Mã sinh viên</div>
+                    <div class="info-value">29211269420</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_major.svg" alt="Major">
+                <div>
+                    <div class="info-label">Ngành học</div>
+                    <div class="info-value">Kỹ thuật Mạng máy tính</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_alert.png" alt="Class">
+                <div>
+                    <div class="info-label">Lớp sinh hoạt</div>
+                    <div class="info-value">K26-TMT</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_email.svg" alt="Email">
+                <div>
+                    <div class="info-label">Email</div>
+                    <div class="info-value">nguyenhoangvu24@dtu.edu.vn</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_phone.svg" alt="Phone">
+                <div>
+                    <div class="info-label">Điện thoại</div>
+                    <div class="info-value">0905 xxx xxx</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. SETTINGS SCREEN -->
+    <div id="settings-screen" class="screen">
+        <div class="sub-header">
+            <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_back.svg" class="btn-back" onclick="navigateTo('home-screen')" alt="Back">
+            <div class="sub-header-title">Cài đặt</div>
+        </div>
+        
+        <div class="settings-list">
+            <div class="setting-item">
+                <div class="setting-left">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_info.svg" alt="Lang">
+                    <span>Ngôn ngữ (Language)</span>
+                </div>
+                <div style="display:flex; gap:5px;">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_vietnam.png" style="width:24px; border:1px solid #ccc">
+                </div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-left">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_flash.svg" alt="Theme">
+                    <span>Chế độ tối (Dark Mode)</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div class="setting-left">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_help.svg" alt="Help">
+                    <span>Trợ giúp & Phản hồi</span>
+                </div>
+                <span>›</span>
+            </div>
+            
+            <div class="btn-logout" onclick="logout()">
+                Đăng xuất
+            </div>
+            
+            <div class="app-version">
+                Phiên bản 1.0.3
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. WALLET SCREEN -->
+    <div id="wallet-screen" class="screen">
+        <div class="sub-header">
+            <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_back.svg" class="btn-back" onclick="navigateTo('home-screen')" alt="Back">
+            <div class="sub-header-title">Ví điện tử</div>
+        </div>
+        
+        <div class="wallet-card">
+            <div class="wallet-card-header">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_wallet.png" alt="Wallet">
+                <span>Số dư khả dụng</span>
+            </div>
+            <div class="wallet-balance">1,250,000 VNĐ</div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 10px;">Cập nhật lúc: 01/08/2026 11:30</div>
+        </div>
+
+        <div class="transaction-list">
+            <div class="section-title">Lịch sử giao dịch</div>
+            
+            <div class="trans-item">
+                <div class="trans-left">
+                    <div class="trans-icon">
+                        <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_money.png" alt="Money">
+                    </div>
+                    <div class="trans-info">
+                        <h4>Nạp tiền vào ví</h4>
+                        <p>30/07/2026 15:45</p>
+                    </div>
+                </div>
+                <div class="trans-amount">+ 1,500,000đ</div>
+            </div>
+            
+            <div class="trans-item">
+                <div class="trans-left">
+                    <div class="trans-icon" style="background-color: rgba(244,67,54,0.1);">
+                        <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_tuition_fee.png" alt="Fee">
+                    </div>
+                    <div class="trans-info">
+                        <h4>Thanh toán học phí</h4>
+                        <p>30/07/2026 16:00</p>
+                    </div>
+                </div>
+                <div class="trans-amount" style="color: var(--error);">- 250,000đ</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav" id="bottom-nav" style="display:none;">
+        <div class="nav-item active" onclick="navigateTo('home-screen', this)">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span class="nav-label">Trang chủ</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('timetable-screen', this)">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+            <span class="nav-label">Lịch</span>
+        </div>
+        <div class="nav-item" onclick="alert('Tính năng đang phát triển')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            <span class="nav-label">Cố vấn</span>
+        </div>
+        <div class="nav-item" onclick="alert('Tính năng đang phát triển')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+            <span class="nav-label">Thư viện</span>
+        </div>
+        <div class="nav-item" onclick="alert('Tính năng đang phát triển')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+            <span class="nav-label">Giảng dạy</span>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // App Logic
+    
+    // Auto hide splash screen
+    setTimeout(() => {
+        document.getElementById('splash-screen').classList.remove('active');
+        document.getElementById('login-screen').classList.add('active');
+    }, 2000);
+
+    function login() {
+        document.getElementById('login-screen').classList.remove('active');
+        document.getElementById('home-screen').classList.add('active');
+        document.getElementById('bottom-nav').style.display = 'flex';
+    }
+    
+    function logout() {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('login-screen').classList.add('active');
+        document.getElementById('bottom-nav').style.display = 'none';
+    }
+
+    function navigateTo(screenId, navElement = null) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        
+        // Handle bottom nav highlight
+        if(navElement) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            navElement.classList.add('active');
+        } else {
+            // Auto select nav item based on screen
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(screenId === 'home-screen') {
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+            } else if(screenId === 'timetable-screen') {
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+            }
+        }
+        
+        // Show/hide bottom nav based on screen
+        const screensWithNav = ['home-screen', 'timetable-screen', 'notifications-screen'];
+        if(screensWithNav.includes(screenId)) {
+            document.getElementById('bottom-nav').style.display = 'flex';
+        } else {
+            document.getElementById('bottom-nav').style.display = 'none';
+        }
+    }
+
+    function toggleTheme() {
+        const body = document.documentElement;
+        if(document.getElementById('theme-toggle').checked) {
+            body.setAttribute('data-theme', 'dark');
+        } else {
+            body.removeAttribute('data-theme');
+        }
+    }
+    
+    // Tab switching for timetable
+    document.querySelectorAll('.day-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
