@@ -41,6 +41,45 @@ MYDTU_PASS = os.getenv("MYDTU_PASS")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+FCM_SERVER_KEY = os.getenv("FCM_SERVER_KEY")
+FCM_DEVICE_TOKEN = os.getenv("FCM_DEVICE_TOKEN")
+
+async def send_fcm_notification(server_key: str, device_token: str, title: str, body: str):
+    """
+    Gửi thông báo đẩy (Push Notification) trực tiếp tới App di động riêng của bạn qua Google Firebase Cloud Messaging (FCM).
+    """
+    if not server_key or not device_token:
+        logger.info("Bỏ qua gửi Push Notification FCM do chưa cấu hình FCM_SERVER_KEY hoặc FCM_DEVICE_TOKEN.")
+        return
+
+    url = "https://fcm.googleapis.com/fcm/send"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"key={server_key}"
+    }
+    payload = {
+        "to": device_token,
+        "notification": {
+            "title": title,
+            "body": body,
+            "sound": "default",
+            "badge": 1
+        },
+        "data": {
+            "click_action": "FLUTTER_NOTIFICATION_CLICK",
+            "screen": "schedule"
+        }
+    }
+
+    try:
+        async with httpx.AsyncClient() as client:
+            res = await client.post(url, json=payload, headers=headers, timeout=10.0)
+            if res.status_code == 200:
+                logger.info("Đã gửi Push Notification tới App riêng thành công qua Firebase FCM!")
+            else:
+                logger.warning(f"Lỗi khi gửi FCM Push Notification ({res.status_code}): {res.text}")
+    except Exception as e:
+        logger.error(f"Lỗi khi gửi FCM Push Notification: {e}")
 
 async def solve_captcha_via_gemini(base64_image: str, api_key: str) -> str:
     """
@@ -508,8 +547,14 @@ async def main():
         "👉 *Vũ nhớ chú ý phòng học và giờ học để đi học đúng giờ nhé!*"
     )
 
-    # Gửi cảnh báo về Telegram
+    # Gửi cảnh báo về Telegram (nếu có cấu hình)
     await send_telegram_alert(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, alert_text)
+
+    # Gửi thông báo đẩy Push Notification trực tiếp tới App riêng (nếu có cấu hình FCM)
+    fcm_title = "🌅 Lịch Học Hôm Nay (05:00)" if is_morning_report else "🚨 Thay Đổi Lịch Học MyDTU!"
+    fcm_body = f"Hôm nay {today_name} ({today_date_str}): " + ("Bạn có lịch học mới!" if today_items else "Bạn không có lịch học (Được nghỉ).")
+    await send_fcm_notification(FCM_SERVER_KEY, FCM_DEVICE_TOKEN, fcm_title, fcm_body)
+
     logger.info("=== Hoàn tất quy trình phát hiện thay đổi và gửi cảnh báo ===")
 
 if __name__ == "__main__":
