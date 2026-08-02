@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>myDTU Mobile</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#C62828">
+    <!-- Fonts -->
+    <style>
+        @font-face {
+            font-family: 'NotoSans';
+            src: url('mydtu_ui_design_kit/fonts/NotoSans-Regular.ttf') format('truetype');
+            font-weight: normal;
+        }
+        @font-face {
+            font-family: 'NotoSans';
+            src: url('mydtu_ui_design_kit/fonts/NotoSans-Bold.ttf') format('truetype');
+            font-weight: bold;
+        }
+
+        :root {
+            --primary-bg: #800A0F;
+            --primary-red: #9E0C13;
+            --header-gradient: linear-gradient(180deg, #8E0A10 0%, #B71C1C 100%);
+            --card-border-red: #B71C1C;
+            --text-dark: #2D2D2D;
+            --text-red: #B71C1C;
+            --text-blue: #0284C7;
+            --text-gray: #666666;
+            --bg-page: #F4F6F8;
+            --active-blue: #0284C7;
+            --success-green: #15803D;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'NotoSans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* App Shell Frame */
+        #app-frame {
+            width: 100%;
+            max-width: 412px;
+            height: 100vh;
+            max-height: 890px;
+            background-color: var(--bg-page);
+            position: relative;
+            overflow: hidden;
+            border-radius: 36px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Status Bar Mockup */
+        .status-bar {
+            height: 44px;
+            background-color: var(--primary-bg);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        /* Screens */
+        .screen {
+            position: absolute;
+            top: 44px; left: 0; width: 100%; height: calc(100% - 44px);
+            display: none;
+            flex-direction: column;
+            background-color: var(--bg-page);
+            z-index: 10;
+            overflow-y: auto;
+            padding-bottom: 75px;
+        }
+        .screen.active { display: flex; }
+
+        /* Splash Screen */
+        #splash-screen {
+            background: linear-gradient(180deg, #8E0A10 0%, #5E0004 100%);
+            color: white;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 24px 80px;
+            z-index: 150;
+        }
+        .splash-logo { width: 180px; margin-bottom: 16px; filter: brightness(0) invert(1); }
+        .splash-title { font-size: 16px; opacity: 0.9; line-height: 1.5; text-align: center; }
+        .splash-hero-img { width: 85%; max-width: 300px; margin: 20px 0; }
+        .btn-start {
+            background: linear-gradient(90deg, #E53935 0%, #C62828 100%);
+            color: white;
+            border: none;
+            padding: 14px 48px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(229, 57, 53, 0.4);
+        }
+
+        /* Curved Header */
+        .curved-header {
+            background: var(--header-gradient);
+            color: white;
+            padding: 12px 18px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 4px 15px rgba(142, 10, 16, 0.3);
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title { font-size: 18px; font-weight: bold; text-align: center; flex: 1; }
+        .btn-icon { background: none; border: none; color: white; cursor: pointer; font-size: 20px; }
+
+        /* Filter Tabs */
+        .filter-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 16px 8px;
+            gap: 8px;
+        }
+        .filter-btn {
+            flex: 1; padding: 10px 0; background: #E5E7EB; border: none; border-radius: 12px; font-size: 13px; font-weight: 600; color: var(--text-dark); text-align: center; cursor: pointer;
+        }
+        .filter-btn.active { background: #3B82F6; color: white; }
+
+        .pagination-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 20px 12px; font-size: 14px; font-weight: bold; color: #C62828; }
+        .pagination-btn { cursor: pointer; }
+
+        .date-pill {
+            background-color: var(--primary-red); color: white; padding: 10px 16px; border-radius: 20px; margin: 10px 16px 8px; font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 3px 8px rgba(158, 12, 19, 0.2);
+        }
+
+        .class-card {
+            background: white; border-radius: 14px; margin: 0 16px 12px; padding: 14px 16px; border-left: 5px solid var(--card-border-red); box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #EEEEEE;
+        }
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+        .subject-title { font-size: 15px; font-weight: bold; color: var(--text-red); flex: 1; }
+        .time-box { font-size: 13px; font-weight: bold; color: #3B82F6; }
+        .info-row { display: flex; justify-content: space-between; font-size: 13px; margin-top: 4px; color: #555555; }
+
+        /* 3x3 Grid Menu (Học tập) */
+        .learning-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 18px 16px;
+        }
+        .grid-card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #EEEEEE;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .grid-card:active { transform: scale(0.95); }
+        .grid-card img { width: 44px; height: 44px; object-fit: contain; margin-bottom: 10px; }
+        .grid-card-title { font-size: 12px; font-weight: bold; color: var(--text-red); line-height: 1.3; }
+
+        /* Curriculum & Detail Screen Styles */
+        .white-card {
+            background: white;
+            border-radius: 16px;
+            margin: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #EEEEEE;
+        }
+        .card-header-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
+        .status-blue { font-size: 12px; color: #3B82F6; font-weight: 500; }
+        
+        .list-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-top: 1px solid #EEEEEE;
+            margin-top: 10px;
+        }
+        .btn-pill-blue {
+            background: #3B82F6; color: white; border: none; padding: 6px 16px; border-radius: 16px; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+
+        /* Category Accordion Header */
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--text-dark);
+            padding: 14px 16px;
+            border-bottom: 2px solid var(--text-red);
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        .course-item-card {
+            background: white;
+            border-radius: 14px;
+            margin: 8px 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #EEEEEE;
+        }
+        .grade-badge {
+            width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; margin-right: 12px;
+        }
+        .grade-A { background: #EEF2FF; color: #4F46E5; }
+        .grade-B { background: #F0FDF4; color: #16A34A; }
+        .grade-C { background: #F0F9FF; color: #0284C7; }
+        .grade-F { background: #FEF2F2; color: #DC2626; }
+
+        .course-info { flex: 1; }
+        .course-name { font-size: 13px; font-weight: bold; margin-bottom: 2px; }
+        .course-code { font-size: 11px; color: #777777; }
+        .course-status { font-size: 11px; font-weight: bold; color: var(--success-green); }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            height: 65px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+            z-index: 50;
+            border-top: 1px solid #EEEEEE;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #888888;
+            cursor: pointer;
+            width: 25%;
+        }
+        .nav-item.active { color: var(--primary-red); }
+        .nav-icon { width: 22px; height: 22px; object-fit: contain; }
+        .nav-item.active .nav-icon { filter: invert(15%) sepia(80%) saturate(6000%) hue-rotate(345deg); }
+        .nav-label { font-size: 11px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="app-frame">
+        <div class="status-bar">
+            <span>9:55</span>
+            <span>📶 🔋</span>
+        </div>
+
+        <!-- 1. Splash Screen -->
+        <div class="screen active" id="splash-screen">
+            <div class="splash-logo-box">
+                <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/logo_duytan.svg" alt="MyDTU Logo" class="splash-logo">
+                <p class="splash-title">Cổng thông tin<br>Sinh viên & Giảng viên<br><strong>myDTU</strong></p>
+            </div>
+            <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/img_cover_splash.png" class="splash-hero-img" alt="Illustration">
+            <button class="btn-start" onclick="navigateTo('schedule-screen')">Bắt đầu ➔</button>
+        </div>
+
+        <!-- 2. Timetable Screen (Lịch Học) -->
+        <div class="screen" id="schedule-screen">
+            <div class="curved-header">
+                <div class="header-top">
+                    <button class="btn-icon" onclick="navigateTo('splash-screen')">❮</button>
+                    <span class="header-title">Lịch học</span>
+                    <button class="btn-icon" onclick="fetchLiveSchedule()">🔄</button>
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <button class="filter-btn">Theo tuần</button>
+                <button class="filter-btn">Theo tháng</button>
+                <button class="filter-btn active">Theo học kỳ</button>
+            </div>
+
+            <div class="pagination-row">
+                <span class="pagination-btn">❮ Lùi</span>
+                <span class="pagination-btn">Tiếp ❯</span>
+            </div>
+
+            <div id="schedule-container"></div>
+
+            <nav class="bottom-nav">
+                <div class="nav-item active" onclick="navigateTo('schedule-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_calender_bottom.svg" class="nav-icon" alt="Lịch">
+                    <span class="nav-label">Lịch</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('advisor-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_adviser_bottom.svg" class="nav-icon" alt="Cố vấn">
+                    <span class="nav-label">Cố vấn</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('learning-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_bottom.svg" class="nav-icon" alt="Học tập">
+                    <span class="nav-label">Học tập</span>
+                </div>
+                <div class="nav-item">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_library_bottom.svg" class="nav-icon" alt="Thư viện">
+                    <span class="nav-label">Thư viện</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- 3. Learning Screen (Học Tập - 3x3 Grid) -->
+        <div class="screen" id="learning-screen">
+            <div class="curved-header">
+                <div class="header-top">
+                    <button class="btn-icon" onclick="navigateTo('schedule-screen')">❮</button>
+                    <span class="header-title">Học tập</span>
+                    <button class="btn-icon">🔔</button>
+                </div>
+            </div>
+
+            <div class="learning-grid">
+                <div class="grid-card" onclick="navigateTo('curriculum-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_student_3.png" alt="Icon">
+                    <div class="grid-card-title">Chương trình học</div>
+                </div>
+                <div class="grid-card" onclick="navigateTo('curriculum-detail-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_course_outline.png" alt="Icon">
+                    <div class="grid-card-title">Đề cương môn học</div>
+                </div>
+                <div class="grid-card">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_transcript.png" alt="Icon">
+                    <div class="grid-card-title">Đăng ký môn học</div>
+                </div>
+                <div class="grid-card">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_score.png" alt="Icon">
+                    <div class="grid-card-title">Điểm số cụ thể</div>
+                </div>
+                <div class="grid-card">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_test.png" alt="Icon">
+                    <div class="grid-card-title">Đề thi Bài tập</div>
+                </div>
+                <div class="grid-card">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_tuition_fee.png" alt="Icon">
+                    <div class="grid-card-title">Hóa đơn Học phí</div>
+                </div>
+                <div class="grid-card">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_money.png" alt="Icon">
+                    <div class="grid-card-title">Dự trù học phí</div>
+                </div>
+                <div class="grid-card">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_wallet.png" alt="Icon">
+                    <div class="grid-card-title">Lịch sử Thanh toán</div>
+                </div>
+                <div class="grid-card">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_tuition_warning.png" alt="Icon">
+                    <div class="grid-card-title">Qui định học, Học phí</div>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <div class="nav-item" onclick="navigateTo('schedule-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_calender_bottom.svg" class="nav-icon" alt="Lịch">
+                    <span class="nav-label">Lịch</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('advisor-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_adviser_bottom.svg" class="nav-icon" alt="Cố vấn">
+                    <span class="nav-label">Cố vấn</span>
+                </div>
+                <div class="nav-item active" onclick="navigateTo('learning-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_bottom.svg" class="nav-icon" alt="Học tập">
+                    <span class="nav-label">Học tập</span>
+                </div>
+                <div class="nav-item">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_library_bottom.svg" class="nav-icon" alt="Thư viện">
+                    <span class="nav-label">Thư viện</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- 4. Curriculum Screen (Chương trình học) -->
+        <div class="screen" id="curriculum-screen">
+            <div class="curved-header">
+                <div class="header-top">
+                    <button class="btn-icon" onclick="navigateTo('learning-screen')">❮</button>
+                    <span class="header-title">Chương trình học</span>
+                    <button class="btn-icon"></button>
+                </div>
+            </div>
+
+            <div class="white-card">
+                <div class="card-header-title">K-28 - Tiếng Trung Du Lịch (Đại Học)</div>
+                <div class="status-blue">Đã hoàn thành</div>
+
+                <div class="list-row">
+                    <span>Chương trình học</span>
+                    <button class="btn-pill-blue" onclick="navigateTo('curriculum-detail-screen')">Chi tiết</button>
+                </div>
+                <div class="list-row">
+                    <span>Khung chương trình dự kiến</span>
+                    <button class="btn-pill-blue">Chi tiết</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Curriculum Detail Screen (Chi tiết Chương trình học) -->
+        <div class="screen" id="curriculum-detail-screen">
+            <div class="curved-header">
+                <div class="header-top">
+                    <button class="btn-icon" onclick="navigateTo('curriculum-screen')">❮</button>
+                    <span class="header-title">Chi tiết Chương trình học</span>
+                    <button class="btn-icon"></button>
+                </div>
+            </div>
+
+            <div style="padding: 16px; font-weight: bold; font-size: 15px; color: var(--text-dark);">
+                🎓 K-28 - Tiếng Trung Du Lịch (Đại Học)
+            </div>
+
+            <div class="accordion-header">
+                <span>📖</span> <span>ĐẠI CƯƠNG</span> <span style="margin-left:auto;">^</span>
+            </div>
+
+            <div class="accordion-header" style="color: var(--text-red); padding-left: 24px;">
+                <span>📖</span> <span>Phương Pháp (Học Tập) (*)</span> <span style="margin-left:auto;">^</span>
+            </div>
+
+            <!-- Grade Items -->
+            <div class="course-item-card">
+                <div class="grade-badge grade-F">F</div>
+                <div class="course-info">
+                    <div class="course-name">Phương Pháp Luận (gồm Nghiên Cứu Khoa Học)</div>
+                    <div class="course-code">PHI 100 - 2 TC</div>
+                </div>
+                <div class="course-status" style="color:#DC2626;">Chưa hoàn tất</div>
+            </div>
+
+            <div class="course-item-card">
+                <div class="grade-badge grade-A">A</div>
+                <div class="course-info">
+                    <div class="course-name">Nói & Trình Bày (tiếng Việt)</div>
+                    <div class="course-code">COM 141 - 1 TC</div>
+                </div>
+                <div class="course-status">Đã hoàn tất</div>
+            </div>
+
+            <div class="course-item-card">
+                <div class="grade-badge grade-B">B</div>
+                <div class="course-info">
+                    <div class="course-name">Viết (tiếng Việt)</div>
+                    <div class="course-code">COM 142 - 1 TC</div>
+                </div>
+                <div class="course-status">Đã hoàn tất</div>
+            </div>
+
+            <div class="accordion-header" style="color: var(--text-red); padding-left: 24px;">
+                <span>📖</span> <span>Công Nghệ Thông Tin (*)</span> <span style="margin-left:auto;">^</span>
+            </div>
+
+            <div class="course-item-card">
+                <div class="grade-badge grade-C">C</div>
+                <div class="course-info">
+                    <div class="course-name">Tin Học Ứng Dụng</div>
+                    <div class="course-code">CS 201 - 3 TC</div>
+                </div>
+                <div class="course-status">Đã hoàn tất</div>
+            </div>
+        </div>
+
+        <!-- 6. Advisor Screen -->
+        <div class="screen" id="advisor-screen">
+            <div class="curved-header">
+                <div class="header-top">
+                    <button class="btn-icon" onclick="navigateTo('schedule-screen')">❮</button>
+                    <span class="header-title">Cố vấn</span>
+                    <button class="btn-icon">🔔</button>
+                </div>
+            </div>
+
+            <div class="learning-grid">
+                <div class="grid-card" onclick="alert('Giảng viên cố vấn: LÊ THỊ BÍCH PHƯƠNG (Mã: 250132176)')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_student_2.png" alt="GV">
+                    <div class="grid-card-title">Giảng viên đang cố vấn</div>
+                </div>
+                <div class="grid-card">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_student_3.png" alt="GV">
+                    <div class="grid-card-title">Giảng viên đã cố vấn</div>
+                </div>
+                <div class="grid-card">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_alert.png" alt="Alert">
+                    <div class="grid-card-title">Cảnh báo học tập</div>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <div class="nav-item" onclick="navigateTo('schedule-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_calender_bottom.svg" class="nav-icon" alt="Lịch">
+                    <span class="nav-label">Lịch</span>
+                </div>
+                <div class="nav-item active" onclick="navigateTo('advisor-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_adviser_bottom.svg" class="nav-icon" alt="Cố vấn">
+                    <span class="nav-label">Cố vấn</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('learning-screen')">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_learning_bottom.svg" class="nav-icon" alt="Học tập">
+                    <span class="nav-label">Học tập</span>
+                </div>
+                <div class="nav-item">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_library_bottom.svg" class="nav-icon" alt="Thư viện">
+                    <span class="nav-label">Thư viện</span>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        function navigateTo(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        async function fetchLiveSchedule() {
+            try {
+                const res = await fetch('last_schedule.json?t=' + Date.now());
+                const data = await res.json();
+                renderSchedule(data);
+            } catch (err) {
+                renderMockData();
+            }
+        }
+
+        function renderSchedule(items) {
+            const container = document.getElementById('schedule-container');
+            if (!items || items.length === 0) {
+                renderEmptyState();
+                return;
+            }
+
+            let html = `
+                <div class="date-pill">
+                    <span>Monday, 08/01/2026</span>
+                    <span>${items.length} ⌃</span>
+                </div>
+            `;
+
+            items.forEach((item, idx) => {
+                const raw = item.raw_info || "";
+                let typeText = "Lớp học tập trung";
+                let typeColor = "#3B82F6";
+
+                if (raw.toLowerCase().includes("tập trung & trực tuyến") || raw.toLowerCase().includes("tập trung và trực tuyến")) {
+                    typeText = "Lớp Học Tập Trung & Trực Tuyến";
+                    typeColor = "#B45309";
+                } else if (raw.toLowerCase().includes("trực tuyến") || raw.toLowerCase().includes("online")) {
+                    typeText = "Học Trực Tuyến (Online)";
+                    typeColor = "#15803D";
+                }
+
+                html += `
+                    <div class="class-card">
+                        <div class="card-top">
+                            <span class="subject-title">Môn học ${idx + 1}</span>
+                            <span class="time-box">⏰ 09:15 - 11:15</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Lớp: <strong style="color:var(--text-red);">CHI 218 B</strong></span>
+                            <span>Loại hình: Chưa có dữ liệu</span>
+                        </div>
+                        <div class="info-row" style="margin-top:6px;">
+                            <span>Phòng: <span style="color:var(--text-red);">1002 - 254 Nguyễn Văn Linh</span></span>
+                        </div>
+                        <div class="info-row" style="margin-top:6px;">
+                            <span>Hình thức: <strong style="color:${typeColor};">${typeText}</strong></span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderMockData() {
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = `
+                <div class="date-pill">
+                    <span>Monday, 08/01/2026</span>
+                    <span>2 ⌃</span>
+                </div>
+                <div class="class-card">
+                    <div class="card-top">
+                        <span class="subject-title">Nghe (tiếng Trung) 3</span>
+                        <span class="time-box">⏰ 9:15 - 11:15</span>
+                    </div>
+                    <div class="info-row">
+                        <span>Lớp <strong style="color:var(--text-red);">CHI 218 B</strong></span>
+                        <span>Loại hình Chưa có dữ liệu</span>
+                    </div>
+                    <div class="info-row" style="margin-top:6px;">
+                        <span>Phòng <span style="color:var(--text-red);">1002 - 254 Nguyễn Văn Linh</span></span>
+                    </div>
+                    <div class="info-row" style="margin-top:6px;">
+                        <span>Hình thức <strong style="color:#3B82F6;">Lớp học tập trung</strong></span>
+                    </div>
+                </div>
+
+                <div class="class-card">
+                    <div class="card-top">
+                        <span class="subject-title">Ngữ Pháp Hán Ngữ Hiện Đại 1</span>
+                        <span class="time-box">⏰ 13:00 - 15:00</span>
+                    </div>
+                    <div class="info-row">
+                        <span>Lớp <strong style="color:var(--text-red);">CHI 213 L</strong></span>
+                        <span>Loại hình Chưa có dữ liệu</span>
+                    </div>
+                    <div class="info-row" style="margin-top:6px;">
+                        <span>Phòng <span style="color:var(--text-red);">502 - 137 Nguyễn Văn Linh</span></span>
+                    </div>
+                    <div class="info-row" style="margin-top:6px;">
+                        <span>Hình thức <strong style="color:#3B82F6;">Lớp học tập trung</strong></span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderEmptyState() {
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; color: #888888;">
+                    <img src="mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_cancle_shedule.png" style="width:64px; opacity:0.6; margin-bottom:12px;">
+                    <p>Hiện tại bạn không có lịch học (Đang nghỉ học).</p>
+                </div>
+            `;
+        }
+
+        fetchLiveSchedule();
+    </script>
+</body>
+</html>

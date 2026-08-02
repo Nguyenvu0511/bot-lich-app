@@ -1,0 +1,22 @@
+{
+  "name": "MyDTU Mobile",
+  "short_name": "MyDTU",
+  "description": "Trợ lý thời khóa biểu MyDTU thông minh",
+  "start_url": "app_combined_mydtu.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#800A0F",
+  "theme_color": "#C62828",
+  "icons": [
+    {
+      "src": "mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_logo_dtu.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "mydtu_ui_design_kit/images/assets/flutter_assets/assets/icons/ic_logo_dtu.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
