@@ -91,6 +91,20 @@
         }
         .screen.active { display: flex; }
 
+        @media (max-width: 600px) {
+            body { background-color: var(--bg-page); }
+            #app-frame {
+                width: 100vw;
+                height: 100vh;
+                max-width: 100vw;
+                max-height: 100vh;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .status-bar { display: none; }
+            .screen { top: 0; height: 100%; }
+        }
+
         /* Splash Screen */
         #splash-screen {
             background: linear-gradient(180deg, #8E0A10 0%, #5E0004 100%);
